@@ -9,7 +9,7 @@ router.get('/', (req, res) => {
     res.json(tasksData);
 });
 
-// Add a task
+/* Add a task
 router.post('/', (req, res) => {
     const { title, description, deadline, priority, done } = req.body;
 
@@ -25,7 +25,56 @@ router.post('/', (req, res) => {
     tasksData.tasks.push(newTask);
     res.status(201).json(newTask);
     tasksData.total_results++;
+});*/
+
+// Add a task
+router.post('/', (req, res) => {
+    const { title, description, deadline, priority, done } = req.body;
+
+    const currentDate = new Date().toISOString();
+
+    const newTask = {
+        id: uuidv4(),
+        title,
+        description,
+        deadline,
+        priority,
+        done,
+        created_at: currentDate,
+        updated_at: currentDate
+    };
+
+    tasksData.tasks.push(newTask);
+    tasksData.total_results++;
+
+    res.status(201).json(newTask);
 });
+
+/* Update an existing task
+router.put('/:id', (req, res) => {
+    const { id } = req.params;
+
+    const taskIndex = tasksData.tasks.findIndex(
+        task => task.id === id
+    );
+
+    if (taskIndex === -1) {
+        return res.status(404).json({
+            status: 404,
+            message: 'Task not found'
+        });
+    }
+
+    const updatedTask = {
+        ...tasksData.tasks[taskIndex],
+        ...req.body,
+        id: id
+    };
+
+    tasksData.tasks[taskIndex] = updatedTask;
+
+    res.json(updatedTask);
+}); */
 
 // Update an existing task
 router.put('/:id', (req, res) => {
@@ -45,7 +94,9 @@ router.put('/:id', (req, res) => {
     const updatedTask = {
         ...tasksData.tasks[taskIndex],
         ...req.body,
-        id: id
+        id: id,
+        created_at: tasksData.tasks[taskIndex].created_at,
+        updated_at: new Date().toISOString()
     };
 
     tasksData.tasks[taskIndex] = updatedTask;
