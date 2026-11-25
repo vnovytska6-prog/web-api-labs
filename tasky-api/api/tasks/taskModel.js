@@ -13,7 +13,11 @@ const TaskSchema = new Schema({
         required: true
     },
     created_at: Date,
-    updated_at: Date
+    updated_at: Date,
+    userId: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    }
 });
 
 // Check that deadline is in the future
