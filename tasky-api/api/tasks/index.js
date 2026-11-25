@@ -16,7 +16,6 @@ router.post('/', asyncHandler(async (req, res) => {
     res.status(201).json(task);
 }));
 
-export default router;
 
 // Update Task
 router.put('/:id', async (req, res) => {
@@ -42,4 +41,6 @@ router.delete('/:id', async (req, res) => {
         res.status(404).json({ code: 404, msg: 'Unable to find Task' });
     }
 });
+
+export default router;
 
