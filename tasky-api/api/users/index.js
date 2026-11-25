@@ -1,3 +1,4 @@
+
 import express from 'express';
 import User from './userModel';
 import asyncHandler from 'express-async-handler';
@@ -6,16 +7,30 @@ import jwt from 'jsonwebtoken';
 const router = express.Router();
 
 // Get all users
-router.get('/', async (req, res) => {
+router.get('/', asyncHandler(async (req, res) => {
     const users = await User.find();
     res.status(200).json(users);
-});
+}));
 
 // Register a new user
 async function registerUser(req, res) {
-    await User.create(req.body);
+    const { username, password } = req.body;
 
-    res.status(201).json({
+    // Password validation
+    const passwordRegex =
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+    if (!passwordRegex.test(password)) {
+        return res.status(400).json({
+            success: false,
+            msg: 'Password must be at least 8 characters long and contain an uppercase letter, a lowercase letter, a number, and a special character.'
+        });
+    }
+
+    // Create user in MongoDB
+    await User.create({ username, password });
+
+    return res.status(201).json({
         success: true,
         msg: 'User successfully created.'
     });
@@ -71,7 +86,7 @@ router.post('/', asyncHandler(async (req, res) => {
     } catch (error) {
         console.error(error);
 
-        res.status(500).json({
+        return res.status(500).json({
             success: false,
             msg: 'Internal server error.'
         });
